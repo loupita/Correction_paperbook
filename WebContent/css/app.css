@@ -1,0 +1,57 @@
+@CHARSET "UTF-8";
+
+legend {
+
+    font: normal 8pt verdana, helvetica, sans-serif;
+
+}
+fieldset {
+
+    padding: 10px;
+
+    border: 1px #0568CD solid;
+
+}
+/* 
+#myToolTip {
+    display:block;
+    height:44px;
+    margin: 0 auto;
+    margin-bottom:30px;
+    overflow:hidden;
+    text-indent:-999em;
+    width:159px;
+    cursor:pointer;
+  }
+ 
+  mouseover state
+  #myToolTip:hover {
+    background-position:0 -44px;
+  }
+ 
+  clicked state
+  #myToolTip:focus {
+    background-position:0 -88px;
+  }
+ 
+  tooltip styling
+  .tooltip {
+    display:none;
+    height:163px;
+    padding:40px 30px 10px 30px;
+    width:310px;
+    font-size:11px;
+    color:#fff;
+  }
+  a .label element inside tooltip
+  .tooltip .label {
+    color:yellow;
+    width:35px;
+  }
+ 
+  .tooltip a {
+    color:#ad4;
+    font-size:11px;
+    font-weight:bold;
+  } */
+  .list-group-item.active>.badge{color:#152B3F;background-color:#000306}
