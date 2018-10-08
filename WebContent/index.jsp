@@ -111,7 +111,7 @@
 						<div class="form-group">
 							<div class="col-md-8">
 								<label for="Nom" class="sr-only">Nom</label> <input type="Nom"
-									id="Nom" name="nom" class="form-control" placeholder="Nom"
+									id="Nom" name="nom" class="form-control" pattern="[A-Za-z0-9]*" placeholder="Nom"
 									required autofocus
 									value="<%if (request.getAttribute("nom") != null)
 				request.getAttribute("nom");%>">
@@ -122,7 +122,7 @@
 							<div class="col-md-8">
 								<label for="Prenom" class="sr-only">Prénom</label> <input
 									type="Prenom" id="Prenom" name="prenom" class="form-control"
-									placeholder="Prénom" required autofocus
+									pattern="[A-Za-z0-9]*" placeholder="Prénom" required autofocus
 									value="<%if (request.getAttribute("prenom") != null)
 				request.getAttribute("prenom");%>">
 							</div>
@@ -132,7 +132,7 @@
 							<div class="col-md-8">
 								<label for="inputId" class="sr-only">Identifiant</label> <input
 									type="identifiant" id="inputId" name="identifiant"
-									class="form-control" placeholder="identifiant" required
+									class="form-control" pattern="[a-zA-Z0-9]*" placeholder="identifiant" required
 									autofocus>
 							</div>
 						</div>
@@ -141,7 +141,7 @@
 							<div class="col-md-8">
 								<label for="inputEmail" class="sr-only">l'adresse mail </label>
 								<input type="email" id="inputEmail" name="email"
-									class="form-control" placeholder="L'adresse mail" required
+									class="form-control"  placeholder="L'adresse mail" required
 									autofocus
 									value="<%if (request.getAttribute("email") != null)
 				request.getAttribute("email");%>">
@@ -152,7 +152,7 @@
 							<div class="col-md-8">
 								<label for="inputPassword" class="sr-only">Mot de passe</label>
 								<input type="password" id="inputPassword" name="mdp"
-									class="form-control" placeholder="Mot de passe" required>
+									class="form-control" pattern="[A-Za-z0-9]*{3,}" placeholder="Mot de passe" required>
 							</div>
 						</div>
 						<p></p>
@@ -161,7 +161,7 @@
 								<label for="inputConfirmationPassword" class="sr-only">Confirmation
 									mot de passe</label> <input type="password"
 									id="inputConfirmationPassword" name="confirmationMdp"
-									class="form-control" placeholder="Confirmation mot de passe"
+									class="form-control" pattern="[A-Za-z0-9]*{3,}" placeholder="Confirmation mot de passe"
 									required>
 							</div>
 						</div>
