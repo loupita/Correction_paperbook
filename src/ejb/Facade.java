@@ -8,8 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.hslf.model.Sheet;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -43,7 +40,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -67,11 +63,10 @@ public class Facade {
 	private long CONST_DURATION_OF_DAY = 1000l * 60 * 60 * 24;
 
 	//chemins pour ecrire les fichiers (publication + sources)
-	private String chemin = "/home/joseline/stage/prof/monFichier/";
-	private String chemin2 = "/home/joseline/stage1/sources+doc_MARKAD/ex_fichiers_excels/";
+	private String chemin = "WEB-INF/monFichier/";
+	private String chemin2 = "WEB-INF/ex_fichiers_excels/";
 	//pour ecrire fichiers Excel
-	private String cheminExcel = chemin2; //à modifier
-	
+	private String cheminExcel = chemin2;
 
 
 
@@ -349,21 +344,27 @@ public class Facade {
 	 * @param date
 	 * @throws Exception
 	 */
+	int cpt=0;
 	private void validationDate( final String date) throws Exception {
 		formater.setLenient(false);
+		cpt++;
 		if (date.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})")){
 			try {
+				System.out.println("####################################");
 				Date d = formater.parse(date);
+				System.out.println("la date entrer est :"+ d);
 				Date today = new Date();
-				if (d.compareTo(today ) == -1) {
+				System.out.println("la date d'aujourd'hui est :" +today);
+				/*if (d.compareTo(today ) == -1) {
 					// traitement du cas d < today
 					throw new Exception("date invalide, nous sommes le : "+formater.format(today));
-				} 
+				} */
 			} catch (ParseException e) {
-				throw new Exception( "date invalide." );
+				
+				throw new Exception( "date invalide" );
 			}
 			catch(Exception e){
-				throw new Exception( "date invalide." );
+				throw new Exception( "date invalide");
 			}
 		}
 
@@ -734,6 +735,7 @@ public class Facade {
 			Conference e = em.find(Conference.class, idEvt);
 			String nomFichierStyle = persConnecte.getId()+"_"+e.getId()+"_Conf.zip";
 			String fichier = enregistrerFichierZipStyle( request,nomFichierStyle,chemin2);
+			
 			if(fichier!=null && !fichier.isEmpty()){
 				System.out.println("fichiers"+fichier);
 				e.setNomFichierStyle(nomFichierStyle);
@@ -891,7 +893,7 @@ public class Facade {
 
 		FileOutputStream fileOut;
 		try {
-			String fichier = cheminExcel+idPers+"_"+"conferences.xls";
+			String fichier = servlet.getServletContext().getRealPath(cheminExcel)+idPers+"_"+"conferences.xls";
 			fileOut = new FileOutputStream(fichier);
 			wb.write(fileOut);
 			fileOut.close();
@@ -1122,7 +1124,7 @@ public class Facade {
 			String nomFichierStyle = persConnecte.getId()+"_"+e.getId()+"_Journal.zip";
 			String fichier = enregistrerFichierZipStyle( request,nomFichierStyle,chemin2);
 			if(fichier!=null && !fichier.isEmpty()){
-				System.out.println("fichiers"+fichier);
+				
 				e.setNomFichierStyle(nomFichierStyle);
 			}
 			if(!erreurs.isEmpty()){
@@ -1253,7 +1255,7 @@ public class Facade {
 
 		FileOutputStream fileOut;
 		try {
-			String fichier = cheminExcel+idPers+"_"+"journaux.xls";
+			String fichier = servlet.getServletContext().getRealPath(cheminExcel)+idPers+"_"+"journaux.xls";
 			fileOut = new FileOutputStream(fichier);
 			wb.write(fileOut);
 			fileOut.close();
@@ -1888,6 +1890,9 @@ public class Facade {
 		String fichier;
 		String archive;
 		Boolean soumisEffect=false;
+		
+		System.out.println("le titre est: " + titre);
+		
 		try {
 			validationTitre(titre);
 		} catch (Exception e) {
@@ -1940,13 +1945,25 @@ public class Facade {
 					}
 				}
 				if(soumisEffect){
-					em.createNativeQuery("update Travail SET soumis='"+1+"' where id="+idTravail+";").executeUpdate();
+					System.out.println("idTravail = "+idTravail);
+					em.createNativeQuery("update Travail SET soumis=1 where id="+idTravail+"").executeUpdate();
+					
+					
+					System.out.println("Requête reussi");
+					//System.out.println(" travail : "+v.getTravail().getId());
 					v.setTravail(t);
+					System.out.println(" travail : "+v.getTravail().getId());
 					//créer dans la bdd.
-					em.persist(v);
+					
+					
+						em.persist(v);
+					
+					
 					//enregistrer le pdf : idPers+idTravail+date.pdf
 					fichier = idPers+"_"+idTravail+"_"+d.toString()+".pdf";
 					archive = idPers+"_"+idTravail+"_"+d.toString()+".zip";
+					System.out.println("Le nom du fichier est:"+ fichier);
+
 					enregistrerFichierPdf(request,fichier,chemin);
 					//enregistrer le pdf : idPers+idTravail+date.zip
 					enregistrerFichierZip( request,archive,chemin);
@@ -1955,6 +1972,8 @@ public class Facade {
 					//enregister le fichier dans cette version.
 					v.setVersionFichier(fichier);
 					v.setVersionArchive(archive);
+					System.out.println("Je suis passé");
+
 				}
 
 			} 
@@ -1996,8 +2015,12 @@ public class Facade {
 				t.setNomSource(archive);
 			} 
 			//Verifier qu il n'y a pas d'erreurs dans l'enregistrement de fichier.
+			
+
+			
 			if(!erreurs.isEmpty()){
-				em.remove(t);
+				System.out.println("Probleme");
+				//em.remove(t);
 				supprimerTravail(idTravail);
 			}
 		}
@@ -2273,10 +2296,12 @@ public class Facade {
 			if(src!=null)
 				src.delete();
 		}
+		
 		//supprimer les versions associés.
 		Collection<Integer> ids = em.createNativeQuery("select id from Version where "
 				+ "travail_id="+id+";").getResultList();
 		for(Integer i : ids){
+			System.out.println("I am entering here");
 			em.createNativeQuery("delete from Reponse where version_id='"+i+"';").executeUpdate();
 			//supprimer les versions
 			em.createNativeQuery("delete from Version where id='"+i+"';").executeUpdate();
@@ -2733,7 +2758,7 @@ public class Facade {
 		try {
 			//Ouvre les flux.
 			entree = new BufferedInputStream(contenu, taille);
-			sortie = new BufferedOutputStream( new FileOutputStream( new File( chemin+ nomFichier ),false ),
+			sortie = new BufferedOutputStream( new FileOutputStream( new File( chemin+'/'+nomFichier ),false ),
 					taille );
 			//copier le contenu.
 			byte[] tampon = new byte[taille];
@@ -2819,7 +2844,9 @@ public class Facade {
 		if ( erreurs.isEmpty() ) {
 			/* Écriture du fichier sur le disque */
 			try {
-				ecrireFichier( contenuFichier, nomFichierVoulu, chemin);
+				String absoluteFilePath= request.getServletContext().getRealPath(chemin);
+				System.out.println(absoluteFilePath);
+				ecrireFichier( contenuFichier, nomFichierVoulu, absoluteFilePath);
 			} catch ( Exception e ) {
 				setErreur("Erreur lors de l'ecriture du fichier sur le disque." );
 			}
@@ -2885,7 +2912,9 @@ public class Facade {
 		if ( erreurs.isEmpty() ) {
 			/* Écriture du fichier sur le disque */
 			try {
-				ecrireFichier( contenuFichier, nomFichierVoulu, chemin);
+				String absoluteFilePath= request.getServletContext().getRealPath(chemin);
+				System.out.println(absoluteFilePath);
+				ecrireFichier( contenuFichier, nomFichierVoulu, absoluteFilePath);
 			} catch ( Exception e ) {
 				setErreur("Erreur lors de l'ecriture du fichier sur le disque." );
 			}
@@ -2955,8 +2984,10 @@ public class Facade {
 		if ( erreurs.isEmpty() ) {
 			/* Écriture du fichier sur le disque */
 			try {
-				ecrireFichier( contenuFichier, nomFichierVoulu, chemin);
-			} catch ( Exception e ) {
+				String absoluteFilePath= request.getServletContext().getRealPath(chemin);
+				System.out.println(absoluteFilePath);
+				ecrireFichier( contenuFichier, nomFichierVoulu, absoluteFilePath);
+				} catch ( Exception e ) {
 				setErreur("Erreur lors de l'ecriture du fichier sur le disque." );
 			}
 		}
@@ -2976,12 +3007,18 @@ public class Facade {
 		 * Décode le nom de fichier récupéré, susceptible de contenir des
 		 * espaces et autres caractères spéciaux, et prépare l'objet File
 		 */
-		try {
-			fichierRequis = URLDecoder.decode( fichierRequis, "UTF-8" );
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
-		File fichier = new File( chemin, fichierRequis );
+		System.out.println("########################################   "+ fichierRequis);
+//		try {
+//			fichierRequis = URLDecoder.decode( fichierRequis, "UTF-8" );
+//			System.out.println("Nous soes entrez");
+//		} catch (UnsupportedEncodingException e1) {
+//			e1.printStackTrace();
+//			
+//		}
+		String absoluteFilePath= servlet.getServletContext().getRealPath(chemin);
+		File fichier = new File( absoluteFilePath, fichierRequis );
+		System.out.println("Chemin crée : "+chemin+" vue par la machine : "+absoluteFilePath);
+		
 
 		/* Vérifie que le fichier existe bien */
 		if ( !fichier.exists() ) {
@@ -2990,6 +3027,7 @@ public class Facade {
 			 * ressource demandée n'existe pas
 			 */
 			try {
+				System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 				response.sendError( HttpServletResponse.SC_NOT_FOUND );
 			} catch (IOException e) {
 				e.printStackTrace();

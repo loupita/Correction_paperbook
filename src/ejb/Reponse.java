@@ -2,6 +2,7 @@ package ejb;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +25,8 @@ public class Reponse implements Serializable{
 	
 	private String reviewer;
 	private String jugement;
+	
+	@Column(columnDefinition="TEXT")
 	private String detailReponse;
 	
 	@ManyToOne

@@ -1,6 +1,7 @@
 package ejb;
 
 import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,6 +25,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+//import javax.validation.constraints.Size;
 
 @Entity
 public class Travail {
@@ -34,7 +38,10 @@ public class Travail {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	private String titre;
+	
+	@Column(columnDefinition="TEXT")
 	private String abstr;
+	
 	private String nomFichier;
 	private String nomSource;
 	private Boolean soumis;

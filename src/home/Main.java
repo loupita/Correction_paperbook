@@ -1,5 +1,5 @@
 package home;
-
+import static java.nio.charset.StandardCharsets.*;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -24,8 +24,8 @@ public class Main extends HttpServlet {
 	@EJB
 	private Facade f=new Facade();
 	private HttpSession session;
-	private String chemin = "/home/joseline/stage/prof/monFichier/";
-	private String chemin2 = "/home/joseline/stage1/sources+doc_MARKAD/ex_fichiers_excels/";
+	private String chemin = "WEB-INF/monFichier/";
+	private String chemin2 = "WEB-INF/ex_fichiers_excels/";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -257,14 +257,24 @@ public class Main extends HttpServlet {
 			}
 			break;
 		case "detailConfEspPerso" :
+			
+			System.out.println("#############################################");
+			System.out.println("le resultat de la recherche est:"+ session.getAttribute("ident"));
+			System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+			System.out.println("le resultat de la recherche est:"+request.getParameter("id") );
 			if(f.getPersonne((String) (session.getAttribute("ident"))) == null){
 				this.getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
 			}
-			else if( f.getConference((String) request.getParameter("id")) == null){
+			
+			
+			//else if( f.getConference((String) request.getParameter("id")) == null){
+			else if( request.getParameter("id")!=null && f.getConference((String) request.getParameter("id")) == null){
+				
+				
 				this.getServletContext().getRequestDispatcher("/WEB-INF/EspacePersonnel/mur.jsp").forward(request, response);
 			}
 			else {
-
+				
 				String sidConf = request.getParameter("id");
 				Conference conf = f.getConference(sidConf);
 				session.setAttribute("conf", conf);
@@ -300,6 +310,8 @@ public class Main extends HttpServlet {
 				int idConf = (int) session.getAttribute("idConf");
 
 				String titre = request.getParameter("titre");
+				byte ptext[] = titre.getBytes();
+				titre = new String(ptext, "UTF-8");
 
 				String acr = request.getParameter("acr");
 
@@ -506,6 +518,8 @@ public class Main extends HttpServlet {
 			else {
 
 				String sidJournal = request.getParameter("id");
+				
+				System.out.println("l'id est :" + sidJournal);
 				Journal journal = f.getJournal(sidJournal);
 				session.setAttribute("journal", journal);
 				session.setAttribute("idJournal",Integer.parseInt(sidJournal));
@@ -542,6 +556,9 @@ public class Main extends HttpServlet {
 				int idJournal = (int) session.getAttribute("idJournal");
 
 				String titre = request.getParameter("titre");
+				byte ptext[] = titre.getBytes();
+				titre = new String(ptext, "UTF-8");
+
 
 				String site = request.getParameter("site");
 
@@ -625,6 +642,7 @@ public class Main extends HttpServlet {
 			else {
 				int idJournal = (int) session.getAttribute("idJournal");
 				request.setAttribute("versions", f.getJournalTravauxSoumis(idJournal));
+				request.setAttribute("id", idJournal);
 				this.getServletContext().getRequestDispatcher("/WEB-INF/EspacePersonnel/Journal/travauxAyantSoumisJ.jsp").forward(request, response);
 			}
 			break;
@@ -640,6 +658,9 @@ public class Main extends HttpServlet {
 			else {
 				int idJournal = (int) session.getAttribute("idJournal");
 				request.setAttribute("travaux", f.getJournalTravauxCiblant(idJournal));
+				request.setAttribute("id", ""+idJournal);
+				
+				System.out.println("###################idJournal : "+request.getAttribute("id"));
 				this.getServletContext().getRequestDispatcher("/WEB-INF/EspacePersonnel/Journal/travauxCiblantsJ.jsp").forward(request, response);
 			}
 			break;
@@ -762,6 +783,9 @@ public class Main extends HttpServlet {
 			}
 			else {
 				String titre = request.getParameter("titre");
+				byte ptext[] = titre.getBytes();
+				titre = new String(ptext, "UTF-8");
+
 
 				String acr = request.getParameter("acr");
 
@@ -849,8 +873,15 @@ public class Main extends HttpServlet {
 			}
 			else {
 				String titre = request.getParameter("titre");
+				
+				System.out.println("le titre sans l'ensodage est:" + titre);
+				
 
+				byte[] ptext = titre.getBytes(ISO_8859_1);
+				titre = new String(ptext, "UTF-8");
 				String abstr = request.getParameter("abstr");
+				byte text[] = abstr.getBytes(ISO_8859_1);
+				abstr = new String(text, "UTF-8");
 
 				String[] confs = request.getParameterValues("confCible");
 
@@ -1050,7 +1081,7 @@ public class Main extends HttpServlet {
 			}
 
 			break;
-			
+		
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //***********************************TRAVAIL CONFERENCE*******************************************
 ////////////////////////////////////////////////////////////////////////////////////////////////////////			
@@ -1130,6 +1161,8 @@ public class Main extends HttpServlet {
 
 				int idConf = (int) session.getAttribute("idConf");
 				String titre = request.getParameter("titre");
+				byte ptext[] = titre.getBytes();
+				titre = new String(ptext, "UTF-8");
 
 				String acr = request.getParameter("acr");
 
@@ -1269,6 +1302,9 @@ public class Main extends HttpServlet {
 
 				int idJournal = (int) session.getAttribute("idJournal");
 				String titre = request.getParameter("titre");
+				byte ptext[] = titre.getBytes();
+				titre = new String(ptext, "UTF-8");
+				System.out.println("le titre est : " +titre);
 
 				String site = request.getParameter("site");
 
@@ -1378,8 +1414,12 @@ public class Main extends HttpServlet {
 				int idTravail = (int) session.getAttribute("idTravail");
 
 				String titre = request.getParameter("titre");
+				byte ptext[] = titre.getBytes();
+				titre= new String(ptext, "UTF-8");
 
 				String abstr = request.getParameter("abstr");
+				byte ptex[] = abstr.getBytes();
+				abstr= new String(ptex, "UTF-8");
 
 				f.modifierTravail(idTravail, titre, abstr);
 
@@ -1611,6 +1651,10 @@ public class Main extends HttpServlet {
 
 				String detail = request.getParameter("detail");
 
+				byte[] ptext = detail.getBytes(ISO_8859_1);
+				detail= new String(ptext, "UTF-8");
+				
+
 				Version version = (Version) session.getAttribute("version");
 				
 				String resultat= request.getParameter("resultat");
@@ -1767,7 +1811,9 @@ public class Main extends HttpServlet {
 			else {
 				int idPers = ((Personne) session.getAttribute("Personne")).getId();
 				int idConf = (int) session.getAttribute("idConf");
+				System.out.println("**********************************");
 				String fichierRequis = idPers+"_"+idConf+"_Conf.zip";
+				System.out.println("le fichier requis est: "+fichierRequis );
 				f.telechergerFichier(this,fichierRequis, response,chemin2);
 			}
 
@@ -1807,7 +1853,10 @@ public class Main extends HttpServlet {
 		
 		case "demo":
 			String fichierRequis = request.getParameter("nomFichier");
+			
+			System.out.println("la demo est " + fichierRequis);
 			f.telechergerFichier(this,fichierRequis, response,chemin);
+			
 			break;
 			
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
